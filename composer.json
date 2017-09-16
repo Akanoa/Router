@@ -1,0 +1,22 @@
+{
+    "name": "noa/router",
+    "description": "A simple PHP Router handling complex route patterns",
+    "type": "library",
+    "require-dev": {
+        "phpunit/phpunit": "^6.3"
+    },
+    "license": "BSD",
+    "authors": [
+        {
+            "name": "Yannick Guern",
+            "email": "dev@guern.eu"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+      "psr-4": {
+        "Noa\\Router": "src/"
+      }
+  }
+}
