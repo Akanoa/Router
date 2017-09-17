@@ -47,5 +47,19 @@ class RouteTest extends TestCase
         $route = new Route('/api/method/:method/param/:param', 'test');
         $result = $route->match('/api/method/get/param/10');
         $this->assertTrue($result);
+
+        // Parametrized route success with constraints (multiple parameter)
+        $route = new Route('/api/method/:method/param/:param', 'test');
+        $route->with('param', '[0-9]+');
+
+        $result = $route->match('/api/method/get/param/10');
+        $this->assertTrue($result);
+
+        // Parametrized route failure with constraints (multiple parameter)
+        $route = new Route('/api/method/:method/param/:param', 'test');
+        $route->with('param', '[0-9]+');
+
+        $result = $route->match('/api/method/get/param/test');
+        $this->assertFalse($result);
     }
 }

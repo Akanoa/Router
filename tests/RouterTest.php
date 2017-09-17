@@ -205,6 +205,19 @@ class RouterTest extends TestCase {
 
     }
 
+    public function testRunFailureWrongCallableType() {
+
+        $this->sendRequest('GET', '/api/test/get');
+
+        $router = new Router();
+        $router->get('/api/test/get', true, "routeTestGet");
+
+        $this->expectException(\Noa\Router\RouterException::class);
+        $this->expectExceptionCode(\Noa\Router\RouterException::INVALID_CALLABLE);
+        $result = $router->run();
+
+    }
+
     public function testRunSuccessFullyDefinedFunction() {
 
         $this->sendRequest('GET', '/api/test/get');

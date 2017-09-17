@@ -8,12 +8,31 @@
 
 namespace Noa\Router;
 
+/**
+ * Class Route
+ * @package Noa\Router
+ */
 class Route {
 
+    /**
+     * @var string $path
+     */
     private $path;
+
+    /**
+     * @var mixed $callable
+     */
     private $callable;
-    private $constrains=array();
-    private $matches=array();
+
+    /**
+     * @var array $constrains
+     */
+    private $constrains = array();
+
+    /**
+     * @var array $matches
+     */
+    private $matches = array();
 
     public function __construct($path, $callable) {
 
@@ -38,6 +57,18 @@ class Route {
     }
 
     /**
+     * Add a constraint on route parameter
+     * @param $name
+     * @param $regex
+     * @return $this The route with constraint
+     */
+    public function with($name, $regex) {
+
+        $this->constrains[$name] = str_replace('(', '(?:', $regex);
+
+        return $this;
+    }
+    /**
      * @param $match
      * @return string
      */
@@ -52,7 +83,8 @@ class Route {
     }
 
     /**
-     * @param $url
+     * Check whether URL match to route
+     * @param string $url URL to check
      * @return bool
      */
     public function match($url) {
@@ -76,8 +108,14 @@ class Route {
         return true;
     }
 
+    /**
+     * Try to call function, throw an exception if provided callable is not a real callable
+     * @return mixed Return data from callable
+     * @throws RouterException The route's callable isn't a real callable
+     */
     public function call() {
 
+        // If the callable isn't a closure
         if (is_string($this->callable)) {
 
             $callableParamaters = explode("#", $this->callable);
@@ -112,6 +150,11 @@ class Route {
             }
 
             return call_user_func($callableParamaters[0], $this->matches);
+        }
+
+        if (!is_callable($this->callable)) {
+
+            throw new RouterException(RouterException::INVALID_CALLABLE);
         }
 
         return call_user_func_array($this->callable, $this->matches);

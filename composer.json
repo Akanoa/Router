@@ -3,6 +3,7 @@
     "description": "A simple PHP Router handling complex route patterns",
     "type": "library",
     "require-dev": {
+        "php":">7.1",
         "phpunit/phpunit": "^6.3",
         "diablomedia/phpunit-pretty-printer": "dev-master"
     },
@@ -14,7 +15,9 @@
         }
     ],
     "minimum-stability": "dev",
-    "require": {},
+    "require": {
+        "php":">5.5"
+    },
     "autoload": {
       "psr-4": {
         "Noa\\Router\\": "src/"

@@ -11,6 +11,10 @@ namespace Noa\Router;
 
 use Throwable;
 
+/**
+ * Class RouterException
+ * @package Noa\Router
+ */
 class RouterException extends \Exception
 {
 
@@ -18,7 +22,13 @@ class RouterException extends \Exception
     const INVALID_CALLABLE = 2;
     const ROUTE_NOT_FOUND = 3;
 
-    public function __construct($code = 0, $complement = '',Throwable $previous = null)
+    /**
+     * RouterException constructor.
+     * @param int $code
+     * @param string $complement
+     * @param Throwable|null $previous
+     */
+    public function __construct($code = 0, $complement = '', Throwable $previous = null)
     {
         switch ($code) {
             case self::INVALID_METHOD:
@@ -31,7 +41,7 @@ class RouterException extends \Exception
                 $message = "No matching route: ".$complement;
                 break;
             default:
-                $message = "Unknown Noa\Router";
+                $message = "Unknown Noa\Router code: ".$code;
                 break;
         }
 
