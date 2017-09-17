@@ -1,3 +1,4 @@
 src_dir: .
 coverage_clover: clover.xml
 json_path: coveralls-upload.json
+repo_token: cWBBtK85DEbva0eVupAcDE2MAvx45XYOJ
