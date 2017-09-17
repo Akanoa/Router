@@ -122,12 +122,7 @@ class Route {
 
             if(count(explode('\\', $callableParamaters[0])) == 1) {
 
-                $trace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 3);
-
-                $reflexion = new \ReflectionClass($trace[2]['class']);
-                $namespace = $reflexion->getNamespaceName();
-
-                $callableParamaters[0] = $namespace.'\\'.$callableParamaters[0];
+                throw new RouterException(RouterException::INVALID_CALLABLE);
             }
 
             if(count($callableParamaters) == 2) {
