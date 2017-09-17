@@ -109,6 +109,14 @@ This the simpler route possible
     $router->get('/test/closure', function (){
         return 'success closure';
     });
+    
+__Controller__
+
+Out of closure, you can use class method as controller
+
+The callable must follow this pattern: 
+
+    \Namespace\Of\Class\ClassName#method
 
 __Pattern matching following HTTP verb__
  
