@@ -18,7 +18,7 @@ Router handles routes, you must create a router before addind route.
     <?php
     require_once vendor/autoload.php
     
-    use Noa\Router;
+    use Noa\Router\Router;
     
     $router = new Router();
 
