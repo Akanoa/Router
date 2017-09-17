@@ -114,13 +114,13 @@ class RouterTest extends TestCase {
     public function testAddNotNamedRoute() {
         // Check route adding
         $router = new Router();
-        $route = $router->get('/api/test/get', 'test', null);
+        $route = $router->get('/api/test/get', 'Noa\Router\Test\test', null);
 
         $this->assertInstanceOf('Noa\Router\Route', $route);
         $this->assertEquals('api/test/get', $route->getPath());
-        $this->assertEquals('test', $route->getCallable());
-        $this->assertArrayHasKey('test', $router->getNamedRoutes());
-        $this->assertEquals($route, $router->getNamedRoutes()['test']);
+        $this->assertEquals('Noa\Router\Test\test', $route->getCallable());
+        $this->assertArrayHasKey('Noa\Router\Test\test', $router->getNamedRoutes());
+        $this->assertEquals($route, $router->getNamedRoutes()['Noa\Router\Test\test']);
 
     }
 
@@ -130,11 +130,11 @@ class RouterTest extends TestCase {
     public function testAddNamedRoute() {
         // Check route adding
         $router = new Router();
-        $route = $router->get('/api/test/get', 'test', "routeTest");
+        $route = $router->get('/api/test/get', 'Noa\Router\Test\test', "routeTest");
 
         $this->assertInstanceOf('Noa\Router\Route', $route);
         $this->assertEquals('api/test/get', $route->getPath());
-        $this->assertEquals('test', $route->getCallable());
+        $this->assertEquals('Noa\Router\Test\test', $route->getCallable());
         $this->assertArrayHasKey('routeTest', $router->getNamedRoutes());
         $this->assertEquals($route, $router->getNamedRoutes()['routeTest']);
 
@@ -277,7 +277,7 @@ class RouterTest extends TestCase {
         $this->sendRequest('GET', '/api/test/get');
 
         $router = new Router();
-        $router->get('/api/test/get', 'Test#test');
+        $router->get('/api/test/get', 'Noa\Router\Test\Test#test');
 
         $result = $router->run();
 
@@ -294,7 +294,7 @@ class RouterTest extends TestCase {
         $router = new Router(array(
             "method" => 'CUSTOM_REQUEST_METHOD'
         ));
-        $router->get('/api/test/get', 'test', "routeTestGet");
+        $router->get('/api/test/get', 'Noa\Router\Test\test', "routeTestGet");
 
         $result = $router->run();
 
@@ -306,7 +306,7 @@ class RouterTest extends TestCase {
         $this->sendRequest('GET', '/api/test/get');
 
         $router = new Router();
-        $router->get('/api/test/get', 'test', "routeTestGet");
+        $router->get('/api/test/get', 'Noa\Router\Test\test', "routeTestGet");
 
         $result = $router->run();
 
@@ -351,7 +351,7 @@ class RouterTest extends TestCase {
         $router = new Router();
 
 
-        $router->get('/api/test/get', 'test2', "routeTestGet");
+        $router->get('/api/test/get', 'test', "routeTestGet");
 
         $this->expectException(RouterException::class);
         $this->expectExceptionCode(RouterException::INVALID_CALLABLE);
