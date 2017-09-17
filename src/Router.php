@@ -16,6 +16,11 @@ namespace Noa\Router;
 class Router {
 
     /**
+     * @var Router $instance
+     */
+    private static $instance;
+
+    /**
      * List of Routes
      * @var array $routes
      */
@@ -32,6 +37,15 @@ class Router {
     );
 
     /**
+     * Default configuration
+     */
+    private static $CONFIGURATION = array(
+            'url' => 'REQUEST_URI',
+            'method' => 'REQUEST_METHOD'
+    );
+
+
+    /**
      * @var array $httpServerVars
      */
     private $httpServerVars;
@@ -43,14 +57,11 @@ class Router {
 
     /**
      * Router constructor.
-     *
+     * @param null|array $httpServerVars
      */
     public function __construct($httpServerVars=null)
     {
-        $this->httpServerVars = array(
-            'url' => 'REQUEST_URI',
-            'method' => 'REQUEST_METHOD'
-        );
+        $this->httpServerVars = self::$CONFIGURATION;
 
         if ($httpServerVars){
             foreach ($httpServerVars as $httpServerVar => $value) {
@@ -61,6 +72,26 @@ class Router {
                 }
             }
         }
+    }
+
+    /**
+     * Get a new instance of Router
+     * @param null|array $httpServerVars
+     * @return Router
+     */
+    public static function getInstance($httpServerVars=null)
+    {
+        if(is_null(self::$instance)) {
+
+            self::$instance = new Router($httpServerVars);
+        }
+
+        return self::$instance;
+    }
+
+    public static function destroy()
+    {
+        self::$instance = null;
     }
 
     /**
@@ -179,5 +210,10 @@ class Router {
         }
 
         throw new RouterException(RouterException::ROUTE_NOT_FOUND, $url);
+    }
+
+    public function __destruct()
+    {
+        self::destroy();
     }
 }
