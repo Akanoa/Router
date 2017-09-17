@@ -3,8 +3,9 @@
 # Yet another Router
 This a simple PHP Router handling complex route patterns
 
+## Description
+Provides a simple way to handle parametrized routes, with zero-dependency package.
 
-
-##Installation
+## Installation
 
     composer require --no-dev noa/router
