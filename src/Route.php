@@ -137,14 +137,6 @@ class Route {
 
                 return call_user_func_array(array($controllerInstance, $action), $this->matches);
             }
-
-
-            if (!is_callable($callableParamaters[0])) {
-
-                throw new RouterException(RouterException::INVALID_CALLABLE);
-            }
-
-            return call_user_func($callableParamaters[0], $this->matches);
         }
 
         if (!is_callable($this->callable)) {

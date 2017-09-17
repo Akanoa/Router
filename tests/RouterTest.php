@@ -12,11 +12,6 @@ use Noa\Router\RouterException;
 use PHPUnit\Framework\TestCase;
 use Noa\Router\Router;
 
-function test() {
-
-    return 'success';
-}
-
 
 class Test {
 
@@ -246,32 +241,6 @@ class RouterTest extends TestCase {
 
     }
 
-    public function testRunSuccessFullyDefinedFunction() {
-
-        $this->sendRequest('GET', '/api/test/get');
-
-        $router = new Router();
-        $router->get('/api/test/get', 'Noa\Router\Test\test', "routeTestGet");
-
-        $result = $router->run();
-
-        $this->assertEquals('success', $result);
-
-    }
-
-    public function testRunSuccessFullyDefinedClassMethod() {
-
-        $this->sendRequest('GET', '/api/test/get');
-
-        $router = new Router();
-        $router->get('/api/test/get', 'Noa\Router\Test\Test#test');
-
-        $result = $router->run();
-
-        $this->assertEquals('success', $result);
-
-    }
-
     public function testRunSuccessClassMethod() {
 
         $this->sendRequest('GET', '/api/test/get');
@@ -294,7 +263,7 @@ class RouterTest extends TestCase {
         $router = new Router(array(
             "method" => 'CUSTOM_REQUEST_METHOD'
         ));
-        $router->get('/api/test/get', 'Noa\Router\Test\test', "routeTestGet");
+        $router->get('/api/test/get', 'Noa\Router\Test\Test#test', "routeTestGet");
 
         $result = $router->run();
 
@@ -308,9 +277,9 @@ class RouterTest extends TestCase {
         $router = new Router();
         $router->get('/api/test/get', 'Noa\Router\Test\test', "routeTestGet");
 
-        $result = $router->run();
-
-        $this->assertEquals('success', $result);
+        $this->expectException(RouterException::class);
+        $this->expectExceptionCode(RouterException::INVALID_CALLABLE);
+        $router->run();
 
     }
 
