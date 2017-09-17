@@ -82,19 +82,39 @@ class Route {
 
             $callableParamaters = explode("#", $this->callable);
 
+            if(count(explode('\\', $callableParamaters[0])) == 1) {
+
+                $trace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 3);
+
+                $reflexion = new \ReflectionClass($trace[2]['class']);
+                $namespace = $reflexion->getNamespaceName();
+
+                $callableParamaters[0] = $namespace.'\\'.$callableParamaters[0];
+            }
+
             if(count($callableParamaters) == 2) {
                 $controllerName = $callableParamaters[0];
                 $controllerInstance = new $controllerName();
                 $action = $callableParamaters[1];
-                return call_user_func_array([$controllerInstance, $action], $this->matches);
+
+                if (!is_callable(array($controllerInstance, $action))) {
+
+                    throw new RouterException(RouterException::INVALID_CALLABLE);
+                }
+
+                return call_user_func_array(array($controllerInstance, $action), $this->matches);
+            }
+
+
+            if (!is_callable($callableParamaters[0])) {
+
+                throw new RouterException(RouterException::INVALID_CALLABLE);
             }
 
             return call_user_func($callableParamaters[0], $this->matches);
-
         }
+
         return call_user_func_array($this->callable, $this->matches);
-
-
     }
 
 

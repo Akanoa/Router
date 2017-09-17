@@ -177,5 +177,7 @@ class Router {
                 return $route->call();
             }
         }
+
+        throw new RouterException(RouterException::ROUTE_NOT_FOUND, $url);
     }
 }

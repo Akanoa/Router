@@ -8,11 +8,13 @@
 
 namespace Noa\Router\Test;
 
+use Noa\Router\RouterException;
 use PHPUnit\Framework\TestCase;
 use Noa\Router\Router;
 
 function test() {
 
+    return 'success';
 }
 
 
@@ -55,8 +57,8 @@ class RouterTest extends TestCase {
 
         $router = new Router();
 
-        $this->expectException(\Noa\Router\RouterException::class);
-        $this->expectExceptionCode(\Noa\Router\RouterException::INVALID_METHOD);
+        $this->expectException(RouterException::class);
+        $this->expectExceptionCode(RouterException::INVALID_METHOD);
 
         $args = array('/api/test/get', 'test', "routeTest", 'WRONG');
         $this->invokeNotPublicMethod($router, 'add', $args);
@@ -176,6 +178,18 @@ class RouterTest extends TestCase {
         $router->run();
     }
 
+    public function testRunFailureNoMatchingRoute() {
+
+        $this->sendRequest('GET', '/api/test/get');
+
+        $router = new Router();
+        $router->get('/api/test/get2', function() {}, "routeTestGet");
+
+        $this->expectException(\Noa\Router\RouterException::class);
+        $this->expectExceptionCode(\Noa\Router\RouterException::ROUTE_NOT_FOUND);
+        $router->run();
+    }
+
     public function testRunSuccessClosure() {
 
         $this->sendRequest('GET', '/api/test/get');
@@ -191,6 +205,61 @@ class RouterTest extends TestCase {
 
     }
 
+    public function testRunSuccessFullyDefinedFunction() {
+
+        $this->sendRequest('GET', '/api/test/get');
+
+        $router = new Router();
+        $router->get('/api/test/get', 'Noa\Router\Test\test', "routeTestGet");
+
+        $result = $router->run();
+
+        $this->assertEquals('success', $result);
+
+    }
+
+    public function testRunSuccessFullyDefinedClassMethod() {
+
+        $this->sendRequest('GET', '/api/test/get');
+
+        $router = new Router();
+        $router->get('/api/test/get', 'Noa\Router\Test\Test#test');
+
+        $result = $router->run();
+
+        $this->assertEquals('success', $result);
+
+    }
+
+    public function testRunSuccessClassMethod() {
+
+        $this->sendRequest('GET', '/api/test/get');
+
+        $router = new Router();
+        $router->get('/api/test/get', 'Test#test');
+
+        $result = $router->run();
+
+        $this->assertEquals('success', $result);
+
+    }
+
+    public function testRunSuccessFunctionCustomHttpVars()
+    {
+
+        $this->sendRequest('GET', '/api/test/get');
+        $_SERVER['CUSTOM_REQUEST_METHOD'] = $_SERVER['REQUEST_METHOD'];
+
+        $router = new Router(array(
+            "method" => 'CUSTOM_REQUEST_METHOD'
+        ));
+        $router->get('/api/test/get', 'test', "routeTestGet");
+
+        $result = $router->run();
+
+        $this->assertEquals('success', $result);
+    }
+
     public function testRunSuccessFunction() {
 
         $this->sendRequest('GET', '/api/test/get');
@@ -201,6 +270,51 @@ class RouterTest extends TestCase {
         $result = $router->run();
 
         $this->assertEquals('success', $result);
+
+    }
+
+    public function testRunFailureFullyDefinedFunction() {
+
+        $this->sendRequest('GET', '/api/test/get');
+
+        $router = new Router();
+
+        $router->get('/api/test/get', 'Noa\Router\Test\test2', "routeTestGet");
+
+        $this->expectException(RouterException::class);
+        $this->expectExceptionCode(RouterException::INVALID_CALLABLE);
+        $router->run();
+
+    }
+
+    public function testRunFailureFullyDefinedClassMethod() {
+
+        $this->sendRequest('GET', '/api/test/get');
+
+        $router = new Router();
+
+        $router->get('/api/test/get', 'Noa\Router\Test\Test#test2', "routeTestGet");
+
+        $this->expectException(RouterException::class);
+        $this->expectExceptionCode(RouterException::INVALID_CALLABLE);
+        $router->run();
+
+    }
+
+
+
+    public function testRunFailureFunction() {
+
+        $this->sendRequest('GET', '/api/test/get');
+
+        $router = new Router();
+
+
+        $router->get('/api/test/get', 'test2', "routeTestGet");
+
+        $this->expectException(RouterException::class);
+        $this->expectExceptionCode(RouterException::INVALID_CALLABLE);
+        $router->run();
 
     }
 
