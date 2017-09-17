@@ -3,7 +3,7 @@
     "description": "A simple PHP Router handling complex route patterns",
     "type": "library",
     "require-dev": {
-        "php":">7.1",
+        "php":">7.0",
         "phpunit/phpunit": "^6.3",
         "diablomedia/phpunit-pretty-printer": "dev-master"
     },
