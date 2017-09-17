@@ -1,0 +1,16 @@
+<phpunit
+        bootstrap="vendor/autoload.php"
+        colors="true"
+        printerClass="DiabloMedia\PHPUnit\Printer\PrettyPrinter"
+>
+  <testsuites>
+    <testsuite name="router">
+      <directory>tests</directory>
+    </testsuite>
+  </testsuites>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">src</directory>
+        </whitelist>
+    </filter>
+</phpunit>
