@@ -44,6 +44,16 @@ In case your HTTP Server don't follow this configuration, you can easily redefin
     // then create the router with custom configuration
     $router = new Router($configuration);
 
+#### Get router instance
+
+You can also get a Router instance through a static call, with or without custom configuration 
+
+    $router = Router::getInstance($configuration);
+    
+When you want to destroy this instance to create a new one, just
+    
+    Router::destroy();
+
 ### How to define routes
 
 A route is a group of three properties:
@@ -51,7 +61,7 @@ A route is a group of three properties:
   - The path pattern of the route
   - The function to call in case of match
   
-For example to create a route matching GET /test, you can proceed like this:
+For example to create a route matching **GET /test**, you can proceed like this:
 
     $router->get('/test', function() {
         return 'success';
