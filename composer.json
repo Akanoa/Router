@@ -20,7 +20,8 @@
     },
     "autoload": {
       "psr-4": {
-        "Noa\\Router\\": "src/"
+        "Noa\\Router\\": "src/",
+        "Noa\\Router\\Example\\":"example/"
       }
   }
 }

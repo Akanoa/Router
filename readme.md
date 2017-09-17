@@ -62,6 +62,45 @@ A route is a group of three properties:
 - The function to call in case of match
 
 You can define routes as many as you want.
+
+For example purpose, here is a DummyController
+
+    namespace Noa\Router\Example;
+
+
+    class DummyController
+    {
+        public function testGet() {
+             return 'success Get';
+        }
+    
+        public function testPut() {
+            return 'success Put';
+        }
+    
+        public function testPost() {
+            return 'success Post';
+        }
+    
+        public function testDelete() {
+            return 'success Delete';
+        }
+    
+        public function testWithParameter($param) {
+    
+            return 'success '.$param;
+        }
+    
+        public function testWithMoreParameter($param, $param2) {
+    
+            return 'success '.$param.':'.$param2;
+        }
+    
+        public function testWithMoreParameterConstraint($param, $param2) {
+    
+            return 'success constraint '.$param.':'.$param2;
+        }
+    }
   
 __Simple GET route__
 
@@ -75,10 +114,10 @@ __Pattern matching following HTTP verb__
  
 A pattern could match multiple HTTP verb, of course you can associate the same controller to all of them.
 
-    $router->get('/test', 'Dummy\Controller\DummyController#testGet');
-    $router->put('/test', 'Dummy\Controller\DummyController#testPut');
-    $router->post('/test', 'Dummy\Controller\DummyController#testPost');
-    $router->delete('/test', 'Dummy\Controller\DummyController#testDelete');
+    $router->get('/test', 'Noa\Router\Example\DummyController#testGet');
+    $router->put('/test', 'Noa\Router\Example\DummyController#testPut');
+    $router->post('/test', 'Noa\Router\Example\DummyController#testPost');
+    $router->delete('/test', 'Noa\Router\Example\DummyController#testDelete');
 
 __Parametrized route__
  
@@ -91,7 +130,7 @@ Thus all url like:
 Will match this route:
 
 
-    $router->get('/test/:param', 'Dummy\Controller\DummyController#testWithParameter');
+    $router->get('/test/:param', 'Noa\Router\Example\DummyController#testWithParameter');
         
 The same thing could be achieve with closure.
 
@@ -107,11 +146,11 @@ Those two routes have the same verb and the same pattern but are considered as d
 
 You can chain constraints as many as you want.
 
-    $router->get('/test/:param/param/:param2', 'Dummy\Controller\DummyController#testWithMoreParameterConstraint')
+    $router->get('/test/:param/param/:param2', 'Noa\Router\Example\DummyController#testWithMoreParameterConstraint')
         ->with('param2', '[0-9]+')
         ->with('param', '[a-z]+');
     
-    $router->get('/test/:param/param/:param2', 'Dummy\Controller\DummyController#testWithMoreParameter');
+    $router->get('/test/:param/param/:param2', 'Noa\Router\Example\DummyController#testWithMoreParameter');
 
 ### Launch route matcher
 
@@ -138,3 +177,12 @@ If non of the route matches, an exception is raised.
                 break;
         }
     }
+
+All this code is available into example folder.
+
+You can use PHP intern server by
+
+    cd example
+    php -S localhost:8082 -t .
+
+Then you can request with curl or Postman to test route matching
