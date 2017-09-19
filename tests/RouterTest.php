@@ -8,6 +8,8 @@
 
 namespace Noa\Router\Test;
 
+use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\ServerRequest;
 use Noa\Router\RouterException;
 use PHPUnit\Framework\TestCase;
 use Noa\Router\Router;
@@ -19,6 +21,23 @@ class Test {
     public function test() {
 
         return 'success';
+    }
+
+    public function testPSR7() {
+
+        // Instance a Router
+        Router::getInstance();
+
+        // get response object
+        $response = Router::getResponse();
+
+        // some treatments
+        $response->getBody()->write("some content");
+        $response = $response->withStatus(201);
+
+        // set the modified response
+        Router::setResponse($response);
+
     }
 }
 
@@ -322,6 +341,77 @@ class RouterTest extends TestCase {
         $this->assertInstanceOf(ServerRequestInterface::class, $request);
         $this->assertEquals('GET', $request->getMethod());
         $this->assertEquals('/api/test/get', $request->getUri()->getPath());
+    }
+
+    public function testSetRequest() {
+
+        $this->sendRequest('GET', '/api/test/get');
+
+        Router::destroy();
+        Router::getInstance();
+
+        $request = ServerRequest::fromGlobals();
+        Router::setRequest($request);
+
+        $this->assertEquals($request, Router::getRequest());
+
+    }
+
+    public function testGetStaticRequest() {
+
+        $this->sendRequest('GET', '/api/test/get');
+
+        Router::destroy();
+        Router::getInstance();
+
+        $request = Router::getRequest();
+
+        $this->assertInstanceOf(ServerRequestInterface::class, $request);
+        $this->assertEquals('GET', $request->getMethod());
+        $this->assertEquals('/api/test/get', $request->getUri()->getPath());
+    }
+
+    public function testGetresponse() {
+
+        $this->sendRequest('GET', '/api/test/get');
+
+        Router::destroy();
+        Router::getInstance();
+
+        $this->assertInstanceOf(Response::class, Router::getResponse());
+    }
+
+    public function testSetresponse() {
+
+        $this->sendRequest('GET', '/api/test/get');
+
+        Router::destroy();
+        Router::getInstance();
+
+        $response = new Response();
+        Router::setResponse($response);
+
+        $this->assertInstanceOf(Response::class, Router::getResponse());
+        $this->assertEquals($response, Router::getResponse());
+    }
+
+    public function testGetresponseModifiedBody() {
+
+        $this->sendRequest('GET', '/test/psr7');
+
+        Router::destroy();
+        $router = Router::getInstance();
+        $router->get("/test/psr7", "Noa\Router\Test\Test#testPSR7");
+
+        $router->run();
+
+        ob_start();
+        echo  Router::getResponse()->getBody();
+        $body = ob_get_clean();
+
+        $this->assertInstanceOf(Response::class, Router::getResponse());
+        $this->assertEquals("some content", $body);
+        $this->assertEquals(201, Router::getResponse()->getStatusCode());
     }
 
 }

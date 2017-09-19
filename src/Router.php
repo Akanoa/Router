@@ -8,7 +8,9 @@
 
 namespace Noa\Router;
 
+use GuzzleHttp\Psr7\Response;
 use \GuzzleHttp\Psr7\ServerRequest;
+use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -49,12 +51,18 @@ class Router {
     private $request = null;
 
     /**
+     * @var Response $response
+     */
+    private $response = null;
+
+    /**
      * Router constructor.
      * @param null|array $httpServerVars
      */
     public function __construct($httpServerVars=null)
     {
         $this->request = ServerRequest::fromGlobals();
+        $this->response = new Response();
     }
 
     /**
@@ -211,10 +219,39 @@ class Router {
     }
 
     /**
+     * Return request object
      * @return ServerRequestInterface
      */
-    public function getRequest()
+    public static function getRequest() {
+
+        return self::$instance->request;
+    }
+
+
+    /**
+     * Set request statically
+     * @param MessageInterface $request
+     */
+    public static function setRequest(MessageInterface $request)
     {
-        return $this->request;
+        self::$instance->request = $request;
+
+    }
+
+    /**
+     * @return Response
+     */
+    public static function getResponse()
+    {
+        return self::$instance->response;
+    }
+
+    /**
+     * Set response after modification
+     * @param Response $response
+     */
+    public static function setResponse(Response $response)
+    {
+        self::$instance->response = $response;
     }
 }

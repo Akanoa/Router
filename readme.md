@@ -173,3 +173,20 @@ You can use PHP intern server by
     php -S localhost:8082 -t .
 
 Then you can request with curl or Postman to test route matching
+
+__PSR-7__
+
+This Router is PSR-7 compliant. It means that you receive an object Request as describe in PGP-FIG and return a Response also compliant PSR-7.
+
+Two function are available which return the objects:
+
+The first one is read only and handle all parameter receive by server.
+
+    $request=Router::getRequest();
+    
+The second one allow to set data into response before return.
+    
+    $response=Router::getResponse();
+
+More information about [here](http://docs.guzzlephp.org/en/stable/psr7.html).
+    
