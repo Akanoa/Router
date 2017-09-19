@@ -4,7 +4,7 @@
 This a simple PHP Router handling complex route patterns
 
 ## Description
-Provides a simple way to handle parametrized routes, with zero-dependency package.
+Provides a simple way to handle parametrized routes, compliant PSR-7.
 
 ## Installation
 
@@ -13,7 +13,7 @@ Provides a simple way to handle parametrized routes, with zero-dependency packag
 ## Usages
 ### How to create a Router
 
-Router handles routes, you must create a router before addind route.
+Router handles routes, you must create a router before adding route.
 
     <?php
     require_once vendor/autoload.php
@@ -22,33 +22,11 @@ Router handles routes, you must create a router before addind route.
     
     $router = new Router();
 
-#### Custom HTTP server vars
-
-In order to match route with HTTP request, the router must know which *$_SERVER* fields contain the request method and the request URI
-
-By default the router is configure like this:
-
-    array(
-        'method' => 'REQUEST_METHOD"
-        'url'    => 'REQUEST_URI'
-    );
-
-In case your HTTP Server don't follow this configuration, you can easily redefine this array with your custom fields
-
-    // Custom configuration
-    $configuration = array(
-        'method' => 'CUSTOM_REQUEST_METHOD"
-        'url'    => 'REQUEST_URI'
-    );
-    
-    // then create the router with custom configuration
-    $router = new Router($configuration);
-
 #### Get router instance
 
 You can also get a Router instance through a static call, with or without custom configuration 
 
-    $router = Router::getInstance($configuration);
+    $router = Router::getInstance();
     
 When you want to destroy this instance to create a new one, just
     
@@ -122,10 +100,10 @@ __Pattern matching following HTTP verb__
  
 A pattern could match multiple HTTP verb, of course you can associate the same controller to all of them.
 
-    $router->get('/test', 'Noa\Router\Example\DummyController#testGet');
-    $router->put('/test', 'Noa\Router\Example\DummyController#testPut');
-    $router->post('/test', 'Noa\Router\Example\DummyController#testPost');
-    $router->delete('/test', 'Noa\Router\Example\DummyController#testDelete');
+    $router->get('/object', 'Noa\Router\Example\DummyController#testGet');
+    $router->put('/object', 'Noa\Router\Example\DummyController#testPut');
+    $router->post('/object', 'Noa\Router\Example\DummyController#testPost');
+    $router->delete('/object', 'Noa\Router\Example\DummyController#testDelete');
 
 __Parametrized route__
  
@@ -138,11 +116,11 @@ Thus all url like:
 Will match this route:
 
 
-    $router->get('/test/:param', 'Noa\Router\Example\DummyController#testWithParameter');
+    $router->get('/object/:param', 'Noa\Router\Example\DummyController#testWithParameter');
         
 The same thing could be achieve with closure.
 
-    $router->get('/test/closure/:param', function ($param){
+    $router->get('/object/closure/:param', function ($param){
         return 'success closure '.$param;
     });
 
@@ -154,11 +132,12 @@ Those two routes have the same verb and the same pattern but are considered as d
 
 You can chain constraints as many as you want.
 
-    $router->get('/test/:param/param/:param2', 'Noa\Router\Example\DummyController#testWithMoreParameterConstraint')
-        ->with('param2', '[0-9]+')
-        ->with('param', '[a-z]+');
+    $router->get('/object/:id/:method/:param', 'Noa\Router\Example\DummyController#testWithMoreParameterConstraint')
+        ->with('method', '[a-z]+')
+        ->with('param', '[0-9]+')
+        ->with('id', '[0-9]+');
     
-    $router->get('/test/:param/param/:param2', 'Noa\Router\Example\DummyController#testWithMoreParameter');
+    $router->get('/object/:id/:method', 'Noa\Router\Example\DummyController#testWithMoreParameter');
 
 ### Launch route matcher
 
@@ -168,7 +147,7 @@ The return of *run* method will the controller return, feel free to do what you 
 
 In this example we only echoing this return.
 
-If non of the route matches, an exception is raised.
+If none of route matches, an exception is raised.
 
     try {
     

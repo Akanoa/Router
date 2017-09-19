@@ -11,6 +11,7 @@ namespace Noa\Router\Test;
 use Noa\Router\RouterException;
 use PHPUnit\Framework\TestCase;
 use Noa\Router\Router;
+use Psr\Http\Message\ServerRequestInterface;
 
 
 class Test {
@@ -51,25 +52,6 @@ class RouterTest extends TestCase {
 
         $router2 = Router::getInstance();
         $this->assertEquals($router, $router2);
-    }
-
-    public function testGetInstanceWithCustomParameters() {
-
-        Router::destroy();
-
-        $configuration = array(
-            'url' => 'CUSTOM_REQUEST_URI'
-        );
-
-        $router = Router::getInstance($configuration);
-        $this->assertInstanceOf(Router::class, $router);
-
-        $router2 = Router::getInstance();
-        $this->assertEquals($router, $router2, 'Route still identical because instance isn\'t destroyed yet');
-
-        Router::destroy();
-        $router3 = Router::getInstance();
-        $this->assertNotEquals($router, $router3, 'Now the instance aren\'t the same');
     }
 
     /**
@@ -326,6 +308,20 @@ class RouterTest extends TestCase {
         $this->expectExceptionCode(RouterException::INVALID_CALLABLE);
         $router->run();
 
+    }
+
+    public function testGetRequest() {
+
+        $this->sendRequest('GET', '/api/test/get');
+
+        Router::destroy();
+        $router = Router::getInstance();
+
+        $request = $router->getRequest();
+
+        $this->assertInstanceOf(ServerRequestInterface::class, $request);
+        $this->assertEquals('GET', $request->getMethod());
+        $this->assertEquals('/api/test/get', $request->getUri()->getPath());
     }
 
 }
