@@ -29,16 +29,16 @@ class DummyController
 
     public function testWithParameter($param) {
 
-        return 'success '.$param;
+        sprintf('Calling with parameter %s',$param );
     }
 
-    public function testWithMoreParameter($param, $param2) {
+    public function testWithMoreParameter($id, $method) {
 
-        return 'success '.$param.':'.$param2;
+        return sprintf('Calling method %s from object#%d without parameter',$method, $id );
     }
 
-    public function testWithMoreParameterConstraint($param, $param2) {
+    public function testWithMoreParameterConstraint($id, $method, $param) {
 
-        return 'success constraint '.$param.':'.$param2;
+        return sprintf('Calling method %s from object#%d with parameter %s',$method, $id, $param );
     }
 }

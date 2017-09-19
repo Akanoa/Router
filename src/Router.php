@@ -8,6 +8,8 @@
 
 namespace Noa\Router;
 
+use \GuzzleHttp\Psr7\ServerRequest;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Class Router
@@ -37,23 +39,14 @@ class Router {
     );
 
     /**
-     * Default configuration
-     */
-    private static $CONFIGURATION = array(
-            'url' => 'REQUEST_URI',
-            'method' => 'REQUEST_METHOD'
-    );
-
-
-    /**
-     * @var array $httpServerVars
-     */
-    private $httpServerVars;
-
-    /**
-     * @var
+     * @var array $namedRoutes
      */
     private $namedRoutes = [];
+
+    /**
+     * @var ServerRequestInterface $request
+     */
+    private $request = null;
 
     /**
      * Router constructor.
@@ -61,17 +54,7 @@ class Router {
      */
     public function __construct($httpServerVars=null)
     {
-        $this->httpServerVars = self::$CONFIGURATION;
-
-        if ($httpServerVars){
-            foreach ($httpServerVars as $httpServerVar => $value) {
-
-                if (isset($this->httpServerVars[$httpServerVar])) {
-
-                    $this->httpServerVars[$httpServerVar] = $value;
-                }
-            }
-        }
+        $this->request = ServerRequest::fromGlobals();
     }
 
     /**
@@ -79,16 +62,19 @@ class Router {
      * @param null|array $httpServerVars
      * @return Router
      */
-    public static function getInstance($httpServerVars=null)
+    public static function getInstance()
     {
         if(is_null(self::$instance)) {
 
-            self::$instance = new Router($httpServerVars);
+            self::$instance = new Router();
         }
 
         return self::$instance;
     }
 
+    /**
+     * Destroy a static instance of Router
+     */
     public static function destroy()
     {
         self::$instance = null;
@@ -173,6 +159,7 @@ class Router {
     }
 
     /**
+     * Return all routes order by method
      * @return array<Route>
      */
     public function getRoutes()
@@ -181,7 +168,7 @@ class Router {
     }
 
     /**
-     *
+     * Return the array of named routes
      * @return mixed
      */
     public function getNamedRoutes()
@@ -189,31 +176,45 @@ class Router {
         return $this->namedRoutes;
     }
 
+    /**
+     * Try to match route with url path
+     * @return mixed
+     * @throws RouterException
+     */
     public function run() {
 
-        if (!in_array($_SERVER[$this->httpServerVars['method']], array_keys($this->getRoutes()))){
+        if (!in_array($this->request->getMethod(), array_keys($this->getRoutes()))){
 
             throw new RouterException(RouterException::INVALID_METHOD);
         }
 
-        $url = $_SERVER[$this->httpServerVars['url']];
-
         /**
          * @var Route $route
          */
-        foreach ($this->getRoutes()[$_SERVER[$this->httpServerVars['method']]] as $route) {
+        foreach ($this->getRoutes()[$this->request->getMethod()] as $route) {
 
-            if($route->match($url)) {
+            if($route->match($this->request->getUri()->getPath())) {
 
                 return $route->call();
             }
         }
 
-        throw new RouterException(RouterException::ROUTE_NOT_FOUND, $url);
+        throw new RouterException(RouterException::ROUTE_NOT_FOUND, $this->request->getUri()->getPath());
     }
 
+    /**
+     * Destructor
+     */
     public function __destruct()
     {
         self::destroy();
+    }
+
+    /**
+     * @return ServerRequestInterface
+     */
+    public function getRequest()
+    {
+        return $this->request;
     }
 }
